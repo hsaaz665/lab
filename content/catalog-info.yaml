@@ -1,0 +1,45 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ${{ values.name }}
+  description: ${{ values.description }}
+  tags:
+    - nodejs
+    - microservice
+    - ${{ values.database }}
+  links:
+    - url: https://${{ values.name }}.example.com/docs
+      title: API Documentation
+      icon: docs
+    - url: https://grafana.example.com/d/${{ values.name }}-dashboard
+      title: Monitoring Dashboard
+      icon: dashboard
+    - url: https://${{ values.name }}.example.com/health
+      title: Health Check
+      icon: check
+    - url: https://slack.com/channels/${{ values.name }}
+      title: Team Channel
+      icon: chat
+  annotations:
+    backstage.io/source-template: ${{ values.name }}
+    backstage.io/techdocs-ref: dir:.
+    github.com/project-slug: ${{ values.destination.owner + "/" + values.destination.repo }}
+    backstage.io/kubernetes-id: ${{ values.name }}
+    prometheus.io/rule: ${{ values.name }}-alerts
+spec:
+  type: service
+  lifecycle: experimental
+  owner: ${{ values.owner }}
+  {% if values.system %}
+  system: ${{ values.system }}
+  {% endif %}
+  dependsOn:
+    {% if values.database == "mongodb" %}
+    - 'resource:${{ values.name }}-mongodb'
+    {% elif values.database == "postgresql" %}
+    - 'resource:${{ values.name }}-postgres'
+    {% elif values.database == "mysql" %}
+    - 'resource:${{ values.name }}-mysql'
+    {% endif %}
+  providesApis:
+    - 'api:${{ values.name }}-api'
