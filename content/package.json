@@ -1,0 +1,70 @@
+{
+  "name": "${{ values.name }}",
+  "version": "1.0.0",
+  "description": "${{ values.description }}",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "build": "echo 'No build step required'",
+    {% if values.addTests %}
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    {% endif %}
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix"
+  },
+  "keywords": [
+    "nodejs",
+    "microservice",
+    "${{ values.database }}",
+    "api"
+  ],
+  "author": "${{ values.owner }}",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.0.0",
+    "morgan": "^1.10.0",
+    "dotenv": "^16.3.1",
+    {% if values.database == "mongodb" %}
+    "mongoose": "^7.5.0",
+    {% elif values.database == "postgresql" %}
+    "pg": "^8.11.3",
+    "knex": "^2.5.1",
+    {% elif values.database == "mysql" %}
+    "mysql2": "^3.6.0",
+    "knex": "^2.5.1",
+    {% endif %}
+    "joi": "^17.9.2",
+    "compression": "^1.7.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "eslint": "^8.47.0",
+    {% if values.addTests %}
+    "jest": "^29.6.2",
+    "supertest": "^6.3.3",
+    {% endif %}
+    "@eslint/js": "^8.47.0"
+  },
+  {% if values.addTests %}
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/__tests__/**/*.js",
+      "**/?(*.)+(spec|test).js"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/index.js"
+    ]
+  },
+  {% endif %}
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
